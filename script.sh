@@ -13,28 +13,33 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-DB_NAME="wordpress"
+DB_NAME="wordpressjonne"
 DB_USERNAME="wordpress"
 DB_PASSWORD="wordpress-password"
 
 echo -e "Script Started 🚀"
 
+echo -e "\nInstalling packages\n"
+
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#2-install-dependencies
 sudo apt update
-sudo apt install -y apache2 \
-    ghostscript \
-    libapache2-mod-php \
-    mysql-server \
-    php \
-    php-bcmath \
-    php-curl \
-    php-imagick \
-    php-intl \
-    php-json \
-    php-mbstring \
-    php-mysql \
-    php-xml \
-    php-zip
+sudo apt install -y curl
+sudo apt install -y apache2
+sudo apt install -y ghostscript
+sudo apt install -y libapache2-mod-php
+sudo apt install -y mysql-server
+sudo apt install -y php
+sudo apt install -y php-bcmath
+sudo apt install -y php-curl
+sudo apt install -y php-imagick
+sudo apt install -y php-intl
+sudo apt install -y php-json
+sudo apt install -y php-mbstring
+sudo apt install -y php-mysql
+sudo apt install -y php-xml
+sudo apt install -y php-zip
+
+echo -e "\nInstalling Wordpress\n"
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#3-install-wordpress
 sudo mkdir -p /srv/www
@@ -50,6 +55,8 @@ sudo a2dissite 000-default
 
 sudo systemctl reload apache2
 
+echo -e "\nConfiguring MySQL\n"
+
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#5-configure-database
 sudo systemctl start mysql
 
@@ -59,6 +66,8 @@ CREATE USER $DB_USERNAME@localhost IDENTIFIED BY '$DB_PASSWORD';
 GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_USERNAME.* TO  $DB_NAME@localhost;
 FLUSH PRIVILEGES;
 EOF
+
+echo -e "\nConfiguring Wordpress\n"
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#6-configure-wordpress-to-connect-to-the-database
 sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
@@ -83,9 +92,7 @@ function generate_salt {
 
 # Todo pls fix!
 #Salt will be the same for all which is not good
-
 sudo sed -i -E 's/put\syour\sunique\sphrase\shere/'$(generate_salt $SALT_LENGTH)'/1;' /srv/www/wordpress/wp-config.php
 
 echo http://localhost
-
 echo Script Done
