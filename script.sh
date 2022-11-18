@@ -13,7 +13,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-DB_NAME="wordpress"
+DB_NAME="wordpress-jonne"
 DB_USERNAME="wordpress"
 DB_PASSWORD="wordpress-password"
 
@@ -21,7 +21,7 @@ echo -e "Script Started 🚀"
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#2-install-dependencies
 sudo apt update
-sudo apt install apache2 \
+sudo apt install -y apache2 \
     ghostscript \
     libapache2-mod-php \
     mysql-server \
@@ -63,10 +63,9 @@ EOF
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#6-configure-wordpress-to-connect-to-the-database
 sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
 
-sudo -u www-data sed -i 's/'$DB_NAME'/wordpress/' /srv/www/wordpress/wp-config.php
-sudo -u www-data sed -i 's/'$DB_USERNAME'/wordpress/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/database_name_here/'$DB_NAME'/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/username_here/'$DB_USERNAME'/' /srv/www/wordpress/wp-config.php
 sudo -u www-data sed -i 's/password_here/'$DB_PASSWORD'/' /srv/www/wordpress/wp-config.php
-
 
 # Function below generates the a salt
 # https://stackoverflow.com/a/23837814
@@ -82,13 +81,10 @@ function generate_salt {
     printf '%s\n' "$ret"
 }
 
-
-WP_CONFIG_LOCATION="./wp-config.php"
-
-# Todo pls fix! 
+# Todo pls fix!
 #Salt will be the same for all which is not good
 
-sudo  sed -i -E 's/put\syour\sunique\sphrase\shere/'$(generate_salt $SALT_LENGTH)'/1;' $WP_CONFIG_LOCATION
+sudo sed -i -E 's/put\syour\sunique\sphrase\shere/'$(generate_salt $SALT_LENGTH)'/1;' /srv/www/wordpress/wp-config.php
 
 echo http://localhost
 
