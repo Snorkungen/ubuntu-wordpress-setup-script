@@ -9,9 +9,7 @@ A script that automates  installation of wordpress on ubuntu. Based upon this gu
 - [Installation](#installation)
 - [Usage](#usage)
 
-
 ## Installation
-
 
 ```sh
 # Install script

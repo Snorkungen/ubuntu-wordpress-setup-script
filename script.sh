@@ -90,9 +90,18 @@ function generate_salt {
     printf '%s\n' "$ret"
 }
 
-# Todo pls fix!
-#Salt will be the same for all which is not good
-sudo sed -i -E 's/put\syour\sunique\sphrase\shere/'$(generate_salt $SALT_LENGTH)'/1;' /srv/www/wordpress/wp-config.php
+WP_CONFIG_FILE="/srv/www/wordpress/wp-config.php"
+SALT=$(generate_salt $SALT_LENGTH)
+
+# Bad solution Incoming
+# I cant be bothered to test
+while read LINE; do
+    sudo sed -E 's/put\syour\sunique\sphrase\shere/'$SALT'/1;' <<< $LINE >> $WP_CONFIG_FILE.temp
+    SALT=$(generate_salt $SALT_LENGTH)
+done < $WP_CONFIG_FILE
+
+sudo rm $WP_CONFIG_FILE
+sudo mv $WP_CONFIG_FILE.temp $WP_CONFIG_FILE
 
 echo http://localhost
 echo Script Done
