@@ -13,7 +13,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-DB_NAME="wordpress-jonne"
+DB_NAME="wordpress"
 DB_USERNAME="wordpress"
 DB_PASSWORD="wordpress-password"
 
