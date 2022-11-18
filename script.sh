@@ -13,8 +13,8 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-DB_NAME="wordpressjonne"
-DB_USERNAME="wordpress"
+DB_NAME="wordpress"
+DB_USERNAME="wordpressuser"
 DB_PASSWORD="wordpress-password"
 
 echo -e "Script Started 🚀"
@@ -63,7 +63,7 @@ sudo systemctl start mysql
 sudo mysql -u root <<EOF
 CREATE DATABASE $DB_NAME;
 CREATE USER $DB_USERNAME@localhost IDENTIFIED BY '$DB_PASSWORD';
-GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_USERNAME.* TO  $DB_NAME@localhost;
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_NAME.* TO  $DB_USERNAME@localhost;
 FLUSH PRIVILEGES;
 EOF
 
