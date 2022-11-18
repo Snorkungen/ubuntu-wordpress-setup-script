@@ -14,6 +14,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 DB_NAME="wordpress"
+DB_USERNAME="wordpress"
 DB_PASSWORD="wordpress-password"
 
 echo -e "Script Started 🚀"
@@ -47,27 +48,25 @@ sudo a2ensite wordpress
 sudo a2enmod rewrite
 sudo a2dissite 000-default
 
-sudo service apache2 reload
+sudo systemctl reload apache2
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#5-configure-database
 sudo systemctl start mysql
 
 sudo mysql -u root <<EOF
 CREATE DATABASE $DB_NAME;
-CREATE USER $DB_NAME@localhost IDENTIFIED BY '$DB_PASSWORD';
-GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_NAME.* TO  $DB_NAME@localhost;
+CREATE USER $DB_USERNAME@localhost IDENTIFIED BY '$DB_PASSWORD';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_USERNAME.* TO  $DB_NAME@localhost;
 FLUSH PRIVILEGES;
 EOF
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#6-configure-wordpress-to-connect-to-the-database
 sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
 
-sudo -u www-data sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
-sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/'$DB_NAME'/wordpress/' /srv/www/wordpress/wp-config.php
+sudo -u www-data sed -i 's/'$DB_USERNAME'/wordpress/' /srv/www/wordpress/wp-config.php
 sudo -u www-data sed -i 's/password_here/'$DB_PASSWORD'/' /srv/www/wordpress/wp-config.php
 
-# somehow fetch from here and read data
-# https://api.wordpress.org/secret-key/1.1/salt/
 
 # Function below generates the a salt
 # https://stackoverflow.com/a/23837814
@@ -83,8 +82,13 @@ function generate_salt {
     printf '%s\n' "$ret"
 }
 
-WP_CONFIG_LOCATION="/srv/www/wordpress/wp-config.php"
-sudo -u www-data cat $WP_CONFIG_LOCATION | sed 's/put your unique phrase here/'$(generate_salt $SALT_LENGTH)'/' >$WP_CONFIG_LOCATION
+
+WP_CONFIG_LOCATION="./wp-config.php"
+
+# Todo pls fix! 
+#Salt will be the same for all which is not good
+
+sudo  sed -i -E 's/put\syour\sunique\sphrase\shere/'$(generate_salt $SALT_LENGTH)'/1;' $WP_CONFIG_LOCATION
 
 echo http://localhost
 
