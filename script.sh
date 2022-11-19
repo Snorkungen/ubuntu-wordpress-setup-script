@@ -53,11 +53,14 @@ sudo a2ensite wordpress
 sudo a2enmod rewrite
 sudo a2dissite 000-default
 
+sudo service apache2 start 
 sudo service apache2 reload 
 
 echo -e "\nConfiguring MySQL\n"
 
 # https://ubuntu.com/tutorials/install-and-configure-wordpress#5-configure-database
+
+sudo service mysql start 
 
 sudo mysql -u root <<EOF
 CREATE DATABASE $DB_NAME;
