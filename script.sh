@@ -96,12 +96,12 @@ SALT=$(generate_salt $SALT_LENGTH)
 # Bad solution Incoming
 # I cant be bothered to test
 while read LINE; do
-    sudo sed -E 's/put\syour\sunique\sphrase\shere/'$SALT'/1;' <<< $LINE >> $WP_CONFIG_FILE.temp
+    sudo sed -E 's/put\syour\sunique\sphrase\shere/'$SALT'/g;' <<< $LINE >> $WP_CONFIG_FILE.temp
     SALT=$(generate_salt $SALT_LENGTH)
 done < $WP_CONFIG_FILE
 
-sudo rm $WP_CONFIG_FILE
-sudo mv $WP_CONFIG_FILE.temp $WP_CONFIG_FILE
+sudo -u www-data rm $WP_CONFIG_FILE
+sudo -u www-data mv $WP_CONFIG_FILE.temp $WP_CONFIG_FILE
 
 echo http://localhost
 echo Script Done
