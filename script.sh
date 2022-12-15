@@ -174,7 +174,7 @@ function configure_wordpress() {
     # https://ubuntu.com/tutorials/install-and-configure-wordpress#6-configure-wordpress-to-connect-to-the-database
     echoln "Configuring Wordpress Config"
 
-    get_wordpress_config | sudo -u www-data -a $FILE_ROOT/wordpress/wp-config.php > /dev/null
+    get_wordpress_config | sudo -u www-data tee -a $FILE_ROOT/wordpress/wp-config.php > /dev/null
 }
 
 echoln "Script Started 🚀"
