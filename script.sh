@@ -4,10 +4,17 @@
 
 # Credits to
 # https://ubuntu.com/tutorials/install-and-configure-wordpress
-
 # https://linuxconfig.org/bash-scripting-cheat-sheet
 
-# This script requires systemd systemctl
+# Feel free to edit the variables below
+
+DB_NAME="wordpress"
+DB_USER="wordpressuser"
+DB_PASSWORD="wordpress-password"
+DB_HOST="localhost"
+PORT=80
+FILE_ROOT=/srv/www
+SALT_LENGTH=128
 
 if [ "$EUID" -ne 0 ]; then
     echo Please run as superuser! Try running:
@@ -15,21 +22,11 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-DB_NAME="wordpress"
-DB_USERNAME="wordpressuser"
-DB_PASSWORD="wordpress-password"
-DB_HOST="localhost"
-
-PORT=80
-FILE_ROOT=/srv/www
-SALT_LENGTH=128
-
-
 function echoln() {
     cat <<EOF
 
-        $1
-    _______________________________________________________________
+    $1
+_______________________________________________________________
 EOF
 }
 
@@ -59,6 +56,8 @@ function install_dependencies() {
 function install_wordpress() {
     # Configure directory for wordpress and install files
     # https://ubuntu.com/tutorials/install-and-configure-wordpress#3-install-wordpress
+
+    echoln "Installing Wordpress"
 
     mkdir -p $FILE_ROOT
     chown www-data: $FILE_ROOT
@@ -91,7 +90,7 @@ function configure_apache() {
 
     echoln "Configuring apache for wordpress"
 
-    get_apache_wordpress_conf > /etc/apache2/sites-available/wordpress.conf
+    get_apache_wordpress_conf >/etc/apache2/sites-available/wordpress.conf
 
     a2ensite wordpress
     a2enmod rewrite
@@ -120,15 +119,16 @@ function configure_database() {
 
     sudo mysql -u root <<EOF
 CREATE DATABASE $DB_NAME;
-CREATE USER $DB_USERNAME@$DB_HOST IDENTIFIED BY '$DB_PASSWORD';
-GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_NAME.* TO  $DB_USERNAME@$DB_HOST;
+CREATE USER $DB_USER@$DB_HOST IDENTIFIED BY '$DB_PASSWORD';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON $DB_NAME.* TO  $DB_USER@$DB_HOST;
 FLUSH PRIVILEGES;
 EOF
 }
 
 # Function below generates the a salt
 # https://stackoverflow.com/a/23837814
-chars=({a..z} {A..Z} {0..9} \, \; \. \: \- \_ \# \* \+ \~ \! \§ \$ \% \& \( \) \= \? \{ \[ \] \} \| \> \<)
+
+chars=({a..z} {A..Z} {0..9} "," \; \. : - _ \# \* \+ \~ \! § \$ % \& \( \) "=" \? \{ \[ \] \} \| \> \<)
 function generate_salt {
     local c=$1 ret=
     while ((c--)); do
@@ -139,13 +139,12 @@ function generate_salt {
 
 function get_wordpress_config() {
     cat <<EOF
-
 <?php
 define( 'DB_NAME', '$DB_NAME' );
-define( 'DB_USER', '$DB_USERNAME' );
+define( 'DB_USER', '$DB_USER' );
 define( 'DB_PASSWORD', '$DB_PASSWORD' );
 
-define( 'DB_HOST', 'localhost' );
+define( 'DB_HOST', '$DB_HOST' );
 define( 'DB_CHARSET', 'utf8' );
 
 define( 'DB_COLLATE', '' );
@@ -177,16 +176,16 @@ function configure_wordpress() {
     # https://ubuntu.com/tutorials/install-and-configure-wordpress#6-configure-wordpress-to-connect-to-the-database
     echoln "Configuring Wordpress Config"
 
-    get_wordpress_config | sudo -u www-data tee -a $FILE_ROOT/wordpress/wp-config.php > /dev/null
+    get_wordpress_config | sudo -u www-data tee -a $FILE_ROOT/wordpress/wp-config.php >/dev/null
 }
 
 echoln "Script Started 🚀"
 
-install_dependencies
-install_wordpress
-configure_apache
-configure_database
-configure_wordpress
+# install_dependencies
+# install_wordpress
+# configure_apache
+# configure_database
+# configure_wordpress
 
 echoln "Script is Done"
-echo "open on http://localhost:$PORT"
+echoln "Open at http://localhost:$PORT"
