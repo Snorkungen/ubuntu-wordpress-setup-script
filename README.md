@@ -4,6 +4,8 @@
 
 A script that automates  installation of wordpress on ubuntu. Based upon this guide <https://ubuntu.com/tutorials/install-and-configure-wordpress>
 
+>This script assumes you are using systemd systectl
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -24,7 +26,6 @@ git clone https://github.com/Snorkungen/ubuntu-wordpress-setup-script.git
 cd ubuntu-wordpress-setup-script
 
 # Run script
-chmod +x ./script.sh && ./script.sh
-
+chmod +x ./script.sh && sudo ./script.sh
 
 ```
