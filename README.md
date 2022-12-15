@@ -26,6 +26,7 @@ git clone https://github.com/Snorkungen/ubuntu-wordpress-setup-script.git
 cd ubuntu-wordpress-setup-script
 
 # Run script
+sudo apt update
 chmod +x ./script.sh && sudo ./script.sh
 
 ```
