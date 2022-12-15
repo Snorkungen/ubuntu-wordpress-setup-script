@@ -39,7 +39,7 @@ function install_dependencies() {
 
     echoln "Installing Dependencies"
 
-    apt install apache2 \
+    apt install -y apache2 \
         ghostscript \
         libapache2-mod-php \
         mysql-server \
@@ -52,7 +52,8 @@ function install_dependencies() {
         php-mbstring \
         php-mysql \
         php-xml \
-        php-zip
+        php-zip \
+        curl
 }
 
 function install_wordpress() {
@@ -90,7 +91,7 @@ function configure_apache() {
 
     echoln "Configuring apache for wordpress"
 
-    get_apache_wordpress_conf >/etc/apache2/sites-available/wordpress.conf
+    get_apache_wordpress_conf > /etc/apache2/sites-available/wordpress.conf
 
     a2ensite wordpress
     a2enmod rewrite
