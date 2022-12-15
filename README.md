@@ -10,6 +10,7 @@ A script that automates  installation of wordpress on ubuntu. Based upon this gu
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Configuration](#configuration)
 
 ## Installation
 
@@ -29,4 +30,27 @@ cd ubuntu-wordpress-setup-script
 sudo apt update
 chmod +x ./script.sh && sudo ./script.sh
 
+```
+
+## Configuration
+
+You can find and edit theese variables at the top of the script.sh file.
+
+```sh
+# Name of database where wordpress stores its data.
+DB_NAME="wordpress"
+
+# Name of the database user who owns the database.
+DB_USER="wordpressuser"
+
+# Password for the user.
+DB_PASSWORD="wordpress-password"
+
+# Port that apache will listen on 
+PORT=80
+
+# Directory where the wordpress live.
+FILE_ROOT=/srv/www
+
+SALT_LENGTH=128
 ```

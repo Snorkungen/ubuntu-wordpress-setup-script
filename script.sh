@@ -11,10 +11,12 @@
 DB_NAME="wordpress"
 DB_USER="wordpressuser"
 DB_PASSWORD="wordpress-password"
-DB_HOST="localhost"
 PORT=80
 FILE_ROOT=/srv/www
 SALT_LENGTH=128
+
+# Do not touch unless you know what you're doing.
+DB_HOST="localhost"
 
 if [ "$EUID" -ne 0 ]; then
     echo Please run as superuser! Try running:
