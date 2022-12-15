@@ -125,6 +125,8 @@ FLUSH PRIVILEGES;
 EOF
 }
 
+# Function below generates the a salt
+# https://stackoverflow.com/a/23837814
 chars=({a..z} {A..Z} {0..9} \, \; \. \: \- \_ \# \* \+ \~ \! \§ \$ \% \& \( \) \= \? \{ \[ \] \} \| \> \<)
 function generate_salt {
     local c=$1 ret=
