@@ -183,11 +183,11 @@ function configure_wordpress() {
 
 echoln "Script Started 🚀"
 
-# install_dependencies
-# install_wordpress
-# configure_apache
-# configure_database
-# configure_wordpress
+install_dependencies
+install_wordpress
+configure_apache
+configure_database
+configure_wordpress
 
 echoln "Script is Done"
 echoln "Open at http://localhost:$PORT"
